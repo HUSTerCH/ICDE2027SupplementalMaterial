@@ -1,0 +1,17 @@
+# Versions confirmed in the saved training logs.
+unsloth==2026.5.7
+transformers==5.5.0
+torch==2.10.0
+triton==3.6.0; platform_system == "Linux"
+
+# Training used the PyTorch 2.10.0+cu128 build with CUDA Toolkit 12.8.
+# Install the appropriate CUDA-enabled PyTorch build for the training machine.
+# Exact versions of the following dependencies were not recorded in the available logs.
+trl
+peft
+datasets
+PyYAML
+bitsandbytes
+accelerate
+numpy
+tqdm

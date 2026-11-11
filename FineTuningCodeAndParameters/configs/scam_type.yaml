@@ -1,0 +1,64 @@
+# Run commands from FineTuningCodeAndParameters/.
+# Training: python train_token_injected_qwen.py --config configs/scam_type.yaml
+# Update model.model_name to the downloaded token-injected model directory.
+# Each training record must contain conversations and should retain its original weight.
+
+env:
+  hf_endpoint: "https://hf-mirror.com"
+  wandb_disabled: "true"
+
+model:
+  model_name: "../models/Qwen3.5-9B-Token-Injected"
+  max_seq_length: 3200
+  dtype: "bfloat16"
+  load_in_4bit: false
+  local_files_only: true
+
+tokenizer:
+  pad_to_multiple_of: 8
+
+lora:
+  r: 128
+  lora_alpha: 64
+  lora_dropout: 0
+  bias: "none"
+  use_gradient_checkpointing: "unsloth"
+  random_state: 3407
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  modules_to_save:
+    - "embed_tokens"
+    - "lm_head"
+
+dataset:
+  data_files: "../Datasets/training/scam_type_train.json"
+  split: "train"
+  dataset_num_proc: 8
+
+training:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  warmup_ratio: 0.1
+  num_train_epochs: 5
+  learning_rate: 1.0e-4
+  weight_decay: 0.01
+  lr_scheduler_type: "linear"
+  optim: "adamw_8bit"
+  seed: 3407
+  logging_steps: 1
+  save_strategy: "epoch"
+  save_steps: null
+  save_total_limit: 2
+  dataset_text_field: "text"
+  packing: false
+  output_dir_base: "./outputs/scam_type"
+
+focal_loss:
+  enabled: false
+  gamma: 3.0

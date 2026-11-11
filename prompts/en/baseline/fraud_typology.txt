@@ -1,0 +1,95 @@
+# Goal
+Read the case narrative above, identify the scam types, and map them to the following two-level label taxonomy. For combined scams, output multiple labels to reconstruct the complete attack chain.
+# Processing Logic
+1. Read the entire case narrative, disregard the victim's emotional expressions, and determine precisely how the scammer contacted the victim and under what pretext the victim was ultimately induced to pay.
+2. Assign classification labels strictly according to the following label dictionary. Output both L1 and L2 labels in the format <L1><L2>:
+    - Identity impersonation: <L1_Identity>, impersonating a credible or familiar identity and abusing trust to commit a scam.
+      * Police, prosecutors, courts, and government agencies: <L2_Id_Gov>, impersonating police, prosecutors, courts, or public regulatory/clearing bodies such as the China Banking and Insurance Regulatory Commission or the Credit Reference Center. This includes impersonating their personnel or forging their materials and channels, such as documents, official websites, apps, official social-media accounts, or official text messages.
+      * Leaders/acquaintances/public figures/business partners: <L2_Id_Acquaintance>, impersonating relatives, friends, colleagues, superiors, celebrities, or, in business settings, existing or potential business partners such as suppliers, customers, enterprises, or public institutions.
+      * Platforms/customer service: <L2_Id_Service>, impersonating official customer service for e-commerce, logistics, financial, or Internet platforms.
+      * Special identities such as military or police personnel: <L2_Id_Military>, impersonating procurement personnel from the military, police, fire services, or similar organizations.
+    - Finance and credit: <L1_Finance>, exploiting funding needs, expectations of capital growth, or a desire to limit losses.
+      * Fake loans and credit cards: <L2_Fin_Loan>, using easy-access loans as bait to lure victims.
+      * Fake credit-record repair: <L2_Fin_CreditFix>, inducing victims to act under pretexts such as an impact on their credit record, closing loan accounts, or canceling campus loans.
+      * Fake investment and wealth management: <L2_Fin_Invest>, using high returns as bait to direct victims to fake investment platforms, where large investments cannot be withdrawn or are lost.
+      * Fake fund liquidation and refunds: <L2_Fin_Recovery>, targeting people who have previously been scammed or suffered investment losses and defrauding them under the pretext of fund liquidation or repayment.
+    - Bait/opportunity fraud: <L1_Bait>, fabricating low-cost, high-return opportunities.
+      * Order brushing and task rebates: <L2_Bait_Task>, offering commissions for liking posts, placing sham orders, or completing tasks; paying small initial rebates; and later demanding repeated transfers under pretexts such as linked orders or account unfreezing.
+      * Fake recruitment/part-time jobs: <L2_Bait_Job>, using fictitious employment opportunities, such as high-paid part-time work, handicraft work, daily-paid jobs, or recruitment, as the initial lure or the means of extracting money.
+      * Online gambling and fake giveaways/prize winnings: <L2_Bait_GambleAndLottery>, luring victims into online gambling through claims of exploitable gambling loopholes, inside information, or guaranteed profits, or inducing transfers through fake giveaways or claims that large prize winnings require taxes, deposits, or other advance payments.
+    - Transactions: <L1_Transactions>, breaches of obligations involving specific fictitious goods or services.
+      * Fake online-game transactions: <L2_Tran_Game>, directing victims to external fake platforms under the pretext of buying or selling virtual goods such as game accounts, equipment, or skins.
+      * Fake shopping and services: <L2_Tran_Shop>, scammers contacting victims as buyers or sellers during transactions involving second-hand goods, tickets, purchasing services, or everyday services. This applies to C2C settings, where the victim may be either the buyer or an individual seller.
+      * B2B fraud/fake procurement—seller victimization: <L2_Tran_Procurement>, impersonating large customers, enterprises, or public institutions, placing large fictitious orders with merchants such as restaurants, building-material suppliers, or companies, and inducing them to advance payments or deposits. This applies only to B2B business settings.
+    - Long-term social relationships and sex-related baiting: <L1_Social>, exploiting emotional or sexual needs to build trust before extracting money.
+      * Online romance/dating/pig butchering: <L2_Soc_Romance>, building trust through a long-term online romantic relationship or friendship, then inducing investments, transfers, operation of accounts on another person's behalf, or participation in other scams.
+      * Offers of large payments for conceiving a child and sex-related baiting: <L2_Soc_Sex>, using promises of various sexual services to lure victims into a scam and progressively extract money.
+    - Illicit online activities and extortion: <L1_Illegal>, extracting money through technical account theft or coercive intimidation and threats of social ruin.
+      * Coercion and extortion: <L2_Ill_Extortion>, exploiting absolute fear and extreme stress concerning reputational damage, a workplace crisis, data loss, or exposure of a sexual scandal. Unlike voluntary spending induced by other lures, this is one-sided, coercive extraction of money.
+      * Account takeover and technical theft: <L2_Ill_ATO>, transferring funds without the victim's deliberate authorization through means such as malware, rogue base stations, credential theft through screen sharing, or obtaining passwords and logging in remotely.
+3. Rules for commonly confused scenarios:
+    - Core rule for identity impersonation: There must be explicit impersonation of an identity that ordinary people generally trust, such as a public authority, acquaintance, celebrity or idol, existing or prospective business customer/supplier, a platform/customer-service representative backed by a major company or bank, or military, police, or fire-service personnel with an inherent status halo. The core purpose must be to obtain the victim's social trust. If the fabricated identity serves only to make the scam narrative plausible—for example, inventing a large customer's identity to justify a fictitious large order—rather than to gain social trust, do not classify it as identity impersonation.
+    - Classifying impersonation of acquaintances/business partners: Whether the impersonated party is a personal acquaintance, such as a relative, friend, colleague, or superior, or a business partner, such as a supplier, customer, or contact at an enterprise or public institution, assign <L2_Id_Acquaintance> whenever the purpose is to abuse the victim's existing trust in that identity.
+    - <L2_Id_Gov>: Forged official materials/channels versus verbal references to authority: Assign the label whenever materials or channels of the above agencies are forged, including documents, official websites, apps, official social-media accounts, or official text messages, regardless of purpose. Do not assign it when an agency's name is invoked only verbally to pressure the victim or collect money, such as saying 'the banking regulator will freeze your assets' or 'transfer to the banking regulator's account,' without forging such materials or channels.
+    - <L2_Tran_Shop> versus <L2_Tran_Procurement>: Use the former when an individual consumer or second-hand seller is scammed while trying to buy fictitious goods/services or sell personal unused items. Use the latter when an operating business is deceived by an impersonated large customer. In a B2B fake-procurement scenario, also output <L2_Id_Acquaintance> if the scammer's identity is supported by ongoing trust-building actions, such as providing credentials, business cards, or contracts, or if the parties already had a business relationship. Do not add an identity-impersonation label for a merely ad hoc, fabricated large-customer identity. Prioritize <L2_Tran_Game> for all scams involving online-game virtual goods, whether the victim is the buyer or seller.
+    - Do not upgrade extraction within a task-rebate chain to a financial label: In task-rebate scams, demands for further transfers because of 'operation errors,' 'frozen accounts,' 'linked or stuck orders,' or 'insufficient transaction volume' are inherent parts of <L2_Bait_Task> and must not be upgraded to finance-related labels. Consider adding a financial label only when the scammer leads the victim away from the original task-rebate platform to a completely new, independent investment platform and carries out an investment scam.
+    - Strict definition of fake fund liquidation/refunds: <L2_Fin_Recovery> applies to secondary scams targeting people who have genuinely suffered financial losses, such as a collapsed P2P lending platform, a closed online-course provider or gym, or previous investment losses, with fund liquidation or refund terminology appearing in the narrative. Do not use this label when a consumer is deceived by an impersonated customer-service representative offering compensation for logistics or product-quality problems.
+    - Distinguishing social engineering from technical theft:
+        * Excluded: Do not assign this label when the victim completes the transfer, such as voluntarily scanning a code or entering the amount/password, or voluntarily discloses a verification code for a single transfer. These are deliberately authorized transfers induced by social engineering.
+        * Included: The scammer must obtain underlying control and independently complete a transfer without the victim's deliberate authorization. This includes: 1. Account-level takeover: obtaining an Apple ID, online-banking credentials, or verification codes for logging in to a financial app, resetting a password, or linking a digital wallet, then logging in remotely to take over the account; 2. Remote control/screen-sharing credential theft: covertly viewing verification codes/passwords through screen sharing or directly controlling the mouse to make transfers; 3. Technical compromise: silently intercepting text messages or controlling devices through malware or similar means.
+        * Simple test: It qualifies if the scammer can continue stealing funds without the victim supplying further verification codes; otherwise, it does not.
+    - Distinguishing romance/dating from sex-related baiting: <L2_Soc_Sex> focuses on immediate sexual desire. Even if described euphemistically as 'local dating,' classify it as sex-related baiting whenever an offline meeting is proposed within a very short period, such as the same day. <L2_Soc_Romance> focuses on developing a long-term emotional relationship and building trust through sustained companionship.
+4. Output Requirements:
+    - Output exactly one valid JSON object containing exactly two fields: reason, which analyzes how the case unfolds, and labels. The reason field must precede the labels field.
+    - In labels, concatenate L1 and L2 labels in a cascade. If multiple L2 labels share one L1 label, put them in separate array elements. For example: "labels":["<L1_xxx><L2_yyy>","<L1_xxx><L2_zzz>","<L1_aaa><L2_bbb>"]
+
+## Example 1
+
+Input:
+【Attraction】
+In April 2021, the victim met a female livestreamer on Kuaishou and maintained an online romantic relationship through continued conversations.
+【Inducement】
+In February 2022, a man claiming to be from the Qingdao Municipal Finance Bureau called. He said that the livestreamer was suspected of money laundering and threatened to freeze all of the victim's assets unless a management fee was paid.
+【Transfer】
+During the online relationship, the victim repeatedly transferred money to the livestreamer as gifts. Following the threat to freeze the assets, the victim again transferred money as instructed to pay the management fee.
+【Awakening】
+After transferring the money, the victim realized that it was a scam.
+Output:
+{
+"reason": "The case presents a typical combined chain involving two roles, A and B. Initially, role A uses the female livestreamer to cultivate a long-term online romantic relationship and provide social companionship (L1_Social/L2_Soc_Romance), extracting small gifts. Later, role B impersonates a government official (L1_Identity/L2_Id_Gov) and uses the coercive threat of freezing assets unless a management fee is paid to extract the final funds. Under the core rule for combined scams, assign labels for both the initial lure and the final extraction mechanism.",
+"labels": ["<L1_Social><L2_Soc_Romance>", "<L1_Identity><L2_Id_Gov>"]
+}
+
+## Example 2
+
+Input:
+【Attraction】
+The victim, a fast-food restaurant owner, received a call from someone claiming to be a procurement officer at a fire brigade. The caller said that the brigade wanted to order 50 boxed meals.
+【Inducement】
+After agreeing on the meals, the caller asked the victim to purchase a specific expensive red wine because a superior wanted it. The caller sent a screenshot showing a delayed transfer of CNY 50,000 and provided a wine seller's WeChat contact.
+【Transfer】
+To secure the business, the victim advanced CNY 30,000 by transferring it to the wine seller through WeChat.
+【Awakening】
+After transferring the money, the victim discovered that the caller had blocked contact and realized that it was a scam.
+Output:
+{
+"reason": "The cover involves identity impersonation, while the core mechanism is B2B business fraud. By impersonating a specific occupational role—a fire-service procurement officer—the scammer places a large fictitious procurement order for boxed meals as bait, constituting identity impersonation. After forging a transfer screenshot, the scammer induces the merchant to advance a large payment to a designated third-party supplier, the WeChat wine seller. The victim acts as the seller or supplier, making this a typical fake-procurement supply-chain scam.",
+"labels": ["<L1_Identity><L2_Id_Military>","<L1_Transactions><L2_Tran_Procurement>"]
+}
+
+## Example 3
+
+Input:
+【Attraction】
+The victim saw an advertisement for sexual services on a local-hookup app and added the advertiser on QQ.
+【Inducement】
+The other party sent an app installation package and induced the victim to download it to place an order; it was actually malware that stole the victim's contact list. A few minutes later, the other party sent the victim's phone contacts and screenshots of a video chat, threatening to send the video to relatives and friends unless CNY 8,000 was transferred.
+【Transfer】
+Out of fear, the victim transferred CNY 8,000 as demanded.
+【Awakening】
+After transferring the money, the victim realized that this was extortion.
+Output:
+{
+"reason": "The initial lure involves soliciting sexual services locally, constituting sex-related baiting. The core method that ultimately causes financial loss is malicious intimidation and extortion after the scammer steals the contact list through a malware app. Assign both sex-related baiting and extortion.",
+"labels": ["<L1_Social><L2_Soc_Sex>","<L1_Illegal><L2_Ill_Extortion>"]
+}

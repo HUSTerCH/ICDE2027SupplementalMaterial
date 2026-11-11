@@ -1,0 +1,84 @@
+# Goal
+Analyze the case narrative above in depth, locate the Awakening stage, and trace backward through the closing events of Transfer and Inducement. Identify the core combination of triggers that ended the scam and map them strictly to the predefined flat taxonomy of eight labels.
+
+# Processing Logic
+1. **Reverse Anchoring**:
+   - Locate the reason for reporting the case or the trigger for recognition in the Awakening stage.
+   - Always trace backward to the last few sentences of Transfer to identify the preceding objective event that triggered recognition.
+   - **Absolute filter**: Ignore unsupported subjective intuitions, such as 'the more I thought about it, the angrier I became' or 'I felt uneasy.' Identify the substantive basis: physical/resource state (no money left), third-party actions (a police visit or being blocked by the scammer), information verification (asking at a bank), unmet expectations (the money never arriving), or shifting rules (a withdrawal error requiring another order).
+2. **Mapping the underlying mechanism**: Assign the most precise category to the termination event strictly according to the label dictionary below. If multiple causes exist, such as running out of money plus a friend's intervention, output a label combination.
+
+# Label Dictionary
+1. <System_Intervention> - External system intervention: Public authorities or financial-institution systems proactively impose a block, such as an anti-scam alert, a call from 96110, a bank card locked by risk controls, or a police visit.
+2. <Social_Intervention> - Close social intervention: Acquaintances such as family, friends, or colleagues intervene, or the victim recognizes the scam after proactively asking an acquaintance. Note: Verification with the actual person being impersonated belongs to external validation.
+3. <External_Validation> - Proactive verification with an authoritative external party: After becoming suspicious, the victim checks with an authoritative channel, such as a bank counter, police station, or official customer service, or with the actual person being impersonated, and is explicitly told that it is a scam.
+4. <Fraud_Awareness_Trigger> - Anti-scam awareness trigger: Recognition follows exposure to anti-scam content, such as finding similar scam cases online, watching an anti-scam program, seeing a platform warning, reading another victim's account of the same scam, or recalling earlier anti-scam education.
+5. <Internal_Logical> - Breakdown of logical trust: The scammer remains in contact and continues inventing reasons to demand money, but the victim recognizes the absurdity through common sense, such as shifting rules or endless extra orders, actively refuses, and recognizes the scam. Excluded scenario: Merely discovering that funds have been moved without authorization.
+6. <Commitment_Failure> - Failure of an expected commitment: The scammer promised a specific outcome, and the victim discovers that it cannot be fulfilled when trying to obtain it, such as being unable to withdraw, money not arriving, or goods differing from what was promised. This failure directly triggers recognition.
+7. <Attacker_Disengagement> - Attacker disengagement/withdrawal: The scammer proactively cuts off contact, such as blocking the victim, dissolving a group, making the app inaccessible, or closing a store.
+8. <Objective_Termination> - Objective interruption/passive termination: The process ends because of lost objective capacity or a passively discovered loss, such as exhausted funds, discovery of unauthorized deductions, or interruption of the physical communication channel.
+
+# Commonly Confused Decisions
+- Active recognition versus passive discovery: If the scammer is still attempting the scam and the victim recognizes and rejects it, assign <Internal_Logical>. Merely discovering that money has been moved belongs to <Objective_Termination>.
+- Acquaintances versus institutions: Contacting an acquaintance belongs to <Social_Intervention>; going to a bank/police station or checking with the actual person being impersonated belongs to <External_Validation>.
+- Proactive system intervention versus victim-initiated verification: Proactive interception by a system/institution belongs to <System_Intervention>; verification initiated by the victim belongs to <External_Validation>.
+- If the narrative ends with only a statement that the victim 'previously received anti-scam publicity,' but recognition was actually triggered by another cause, **do not assign** <Fraud_Awareness_Trigger>.
+- Identify the objective event preceding recognition and ignore purely subjective intuitions such as 'the more I thought about it, the angrier I became.'
+
+# Output Format
+Output only JSON, without Markdown markers or additional explanations.
+{
+  "analysis": "Anchoring the recognition event and tracing backward reveals...",
+  "labels": ["<Label_Name>", ...]
+}# Few-shot Examples
+
+## Example 1
+Input:
+【Attraction】
+At 10:30 on September 29, 2022, an unidentified person added the victim to a WeChat group and said that downloading an app called 'Wangduobao' would allow the victim to earn commissions by completing tasks over the long term.
+【Inducement】
+The victim downloaded 'Wangduobao' and registered an account. Later, a customer-service representative said that more money could be earned by following a website link to a page called 'Sanchao Department Store.'
+【Transfer】
+To earn more money, the victim invested a small amount, quickly received returns, and could withdraw them. The victim then transferred CNY 42,480 to an account specified by the other party. After seeing further returns and attempting a withdrawal, the victim was told by the system that a withdrawal operation error had occurred and another order was required.
+【Awakening】
+The victim realized that it was a scam and reported it at 15:05 on September 30, 2022.
+
+Output:
+{
+    "analysis": "Anchoring on awake, the victim describes only realizing the scam and reporting it. Tracing backward to the end of transfer reveals that, after transferring a large amount and attempting a withdrawal, the victim encountered a continuing demand that the system showed a withdrawal operation error and another order was required. The scammer was still inventing reasons to demand money. The victim's common sense was activated by recognizing the absurdity of shifting rules and a bottomless demand for payments, leading to cessation of payments.",
+    "labels": ["<Internal_Logical>"]
+}
+
+## Example 2
+Input:
+【Attraction】
+The victim received a call from someone claiming to be from a courier compensation center.
+【Inducement】
+The caller instructed the victim to download a meeting app, enable screen sharing, and follow instructions to process compensation.
+【Transfer】
+The victim entered a bank-card password and verification code as instructed and then discovered that CNY 100,000 had been moved from the account. The caller claimed that this was a virtual deduction and instructed the victim to borrow another CNY 50,000 through online loans to generate transaction volume and unlock the account. The victim tried to borrow online, but major platforms immediately rejected the applications because of credit-record problems, leaving no available borrowing options.
+【Awakening】
+Unable to obtain money and feeling panicked, the victim took the phone to a nearby police station, asked an officer, and was told that it was a scam.
+
+Output:
+{
+    "analysis": "Anchoring on Awakening, the victim ultimately sought police help because an officer at the station explicitly confirmed that it was a scam, constituting confirmation by an authoritative third party. Tracing backward to the end of Transfer, the preceding practical reason for visiting the station was rejection of online loans and the inability to borrow money. The victim still wanted to continue but had objectively exhausted available resources. The two triggers are independent: resource exhaustion forced transfers to stop, while proactive verification confirmed the scam. Together they form two distinct interruptions.",
+    "labels": ["<Objective_Termination>", "<External_Validation>"]
+}
+
+## Example 3
+Input:
+【Attraction】
+On August 3, 2022, a 'mentor' in an investment discussion group recommended an investment app called 'Jucaibao,' claiming that internal data could predict price movements and provide stable monthly returns of 20%.
+【Inducement】
+The victim downloaded the app and, under the mentor's guidance, made a small CNY 500 trial investment. Three days later, the account displayed a CNY 320 profit that could be withdrawn, establishing trust. The mentor then recommended 'VIP large orders,' claiming that a larger principal would produce higher returns.
+【Transfer】
+The victim made transfers totaling CNY 78,000 to several bank accounts supplied by the other party. After the final transfer, a withdrawal application in the app remained 'under review.' The victim tried to contact the mentor and discovered that the mentor had blocked the victim on WeChat. Reopening the app showed 'server maintenance,' and login remained impossible thereafter.
+【Awakening】
+Unable to contact the other party or log in to the platform, the victim recognized the scam and reported it at a police station that day.
+
+Output:
+{
+    "analysis": "Anchoring on Awakening, the victim recognized the scam after being blocked by the mentor on WeChat and losing access to the app. Tracing backward to the end of Transfer, the scammer proactively cut off every contact channel after extracting the money, both blocking WeChat contact and shutting down the platform. This is typical proactive attacker disengagement. The withdrawal remaining under review is a natural state following the attacker's departure, rather than an independent trigger involving an unfulfilled wait; Commitment_Failure need not be added.",
+    "labels": ["<Attacker_Disengagement>"]
+}

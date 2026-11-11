@@ -1,0 +1,60 @@
+# Operating-system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+
+# Python and notebook caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+unsloth_compiled_cache/
+
+# Local environments and credentials
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Runtime logs and caches
+*.log
+logs/
+.cache/
+wandb/
+runs/
+tensorboard/
+*.tmp
+*.bak
+/tmp/
+/temp/
+
+# Downloaded models and generated training or inference outputs
+/models/
+/FineTuningCodeAndParameters/outputs/
+/FineTuningCodeAndParameters/evaluation/outputs/
+/FineTuningCodeAndParameters/batch_results*.json
+/FineTuningCodeAndParameters/evaluation/batch_results*.json
+
+# SQLite runtime sidecars
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.sqlite3-journal
