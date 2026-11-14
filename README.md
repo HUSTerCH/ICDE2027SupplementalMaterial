@@ -2,13 +2,13 @@
 
 This repository accompanies our study of Chinese telecom scam cases. The study organizes case narratives into four stages—Attraction, Inducement, Transfer, and Awakening—and analyzes scam types, exploited psychological factors, and awakening factors.
 
-The materials include CCL-derived data, classification taxonomies, Chinese prompts with English translations, and code and configurations for task-specific LoRA fine-tuning. Model weights are available through the download link below.
+The materials include CCL-derived large-scale analysis data, classification taxonomies, Chinese prompts with English translations, and code and configurations for task-specific LoRA fine-tuning. Model weights are available through the download link below.
 
 ## Repository Contents
 
 | Directory | Contents |
 |---|---|
-| [Datasets/CCL](Datasets/CCL/README.md) | Training and evaluation examples, large-scale analysis records, and a data-loading helper. |
+| [Datasets/CCL](Datasets/CCL/README.md) | Large-scale analysis records, their data manifest, and a data-loading helper. |
 | [FineTuningCodeAndParameters](FineTuningCodeAndParameters/) | Token Injection, weighted fine-tuning, task configurations, and batch evaluation scripts. |
 | [Taxonomies](Taxonomies/) | Chinese and English category definitions for the three analysis tasks. |
 | [prompts](prompts/readme.md) | Fine-tuning and baseline classification prompts, plus the CCL four-stage segmentation prompt. |
@@ -17,13 +17,13 @@ The materials include CCL-derived data, classification taxonomies, Chinese promp
 
 ### Data_CCL
 
-The released CCL-derived data cover the three classification tasks and large-scale case analysis:
+The released CCL-derived data support large-scale case analysis.
 
-- `training_and_evaluation/` contains a separate folder for each task. Each folder provides `train.json.gz`, `test.json.gz`, and `baseline_test.json.gz`. Each task has 1,000 evaluation cases; the two test formats contain the same case IDs.
 - `analysis/cases.jsonl.gz` contains 28,591 case records with four-stage narratives, financial losses, task eligibility information, and model predictions. The analysis labels are model outputs rather than manual ground truth.
-- `manifest.json` records the source versions and exported record counts. Training exports include augmented examples and may contain repetitions, so their sizes should not be interpreted as counts of distinct manually annotated real cases.
+- `manifest.json` records the analysis file's provenance, record counts, and fields.
+- `read_data.py` reads the compressed analysis records directly with the Python standard library.
 
-The files are gzip-compressed. [The dataset guide](Datasets/CCL/README.md) explains their fields and provides examples using `read_data.py`, which reads the compressed files directly with the Python standard library.
+[The dataset guide](Datasets/CCL/README.md) explains the record fields and provides a reading example.
 
 ### Data_INT
 
@@ -58,16 +58,16 @@ The code under [FineTuningCodeAndParameters](FineTuningCodeAndParameters/) inclu
 
 Dependencies are listed in [requirements.txt](FineTuningCodeAndParameters/requirements.txt). The original training environment used CUDA-enabled PyTorch; install a build suitable for the training machine.
 
-Before training, update `model.model_name` to the downloaded token-injected model directory and `dataset.data_files` to the corresponding training file. For example, when running from `FineTuningCodeAndParameters/`, the released scam-type training file is `../Datasets/CCL/training_and_evaluation/scam_type/train.json.gz`. Retain the original sample weights.
+Before training, prepare compatible training data and update `model.model_name` to the downloaded token-injected model directory and `dataset.data_files` to your training JSON file; the dataset paths in the configurations are examples. Training examples use a `conversations` field, with `from` and `value` keys in each message. Include the original `weight` field when applying sample weighting.
 
-After updating the paths, a scam-type training run can be started from the repository root with:
+After preparing the training data and updating the paths, a scam-type training run can be started from the repository root with:
 
 ```bash
 cd FineTuningCodeAndParameters
 python train_token_injected_qwen.py --config configs/scam_type.yaml
 ```
 
-For evaluation, use `batch_test_token_injected_qwen.py` for scam types or awakening factors, and `batch_test_token_injected_qwen_exp_psy.py` for the three-stage psychological-factor task. Supply the matching configuration, adapter directory, and test file through `--config`, `--adapter`, and `--test_dataset`. These scripts read uncompressed JSON, so decompress the relevant `test.json.gz` before running them. They export per-case predictions and report JSON validity and label exact-match accuracy.
+For evaluation, use `batch_test_token_injected_qwen.py` for scam types or awakening factors, and `batch_test_token_injected_qwen_exp_psy.py` for the three-stage psychological-factor task. Supply the matching configuration, adapter directory, and test file through `--config`, `--adapter`, and `--test_dataset`. Provide a compatible evaluation file separately in uncompressed JSON format. They export per-case predictions and report JSON validity and label exact-match accuracy.
 
 ## Model Downloads
 
